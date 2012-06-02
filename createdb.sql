@@ -6,89 +6,91 @@ CREATE DATABASE enronmail
   WITH OWNER = postgres
        ENCODING = 'UTF8'
        TABLESPACE = pg_default
-       LC_COLLATE = 'English_United States.1252'
-       LC_CTYPE = 'English_United States.1252'
+--       LC_COLLATE = 'English_United States.1252'
+--       LC_CTYPE = 'English_United States.1252'
        CONNECTION LIMIT = -1;
 
--- Table: "Mailbox"
+\connect enronmail
 
--- DROP TABLE "Mailbox";
+-- Table: "mailbox"
 
-CREATE TABLE "Mailbox"
+-- DROP TABLE "mailbox";
+
+CREATE TABLE "mailbox"
 (
-  "Id" serial NOT NULL,
-  "MailboxName" character varying(50),
-  CONSTRAINT pk_id PRIMARY KEY ("Id" )
+  "id" serial NOT NULL,
+  "mailbox_name" character varying(50),
+  CONSTRAINT pk_id PRIMARY KEY ("id" )
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "Mailbox"
+ALTER TABLE "mailbox"
   OWNER TO postgres;
 
 
--- Table: "Folder"
+-- Table: "folder"
 
--- DROP TABLE "Folder";
+-- DROP TABLE "folder";
 
-CREATE TABLE "Folder"
+CREATE TABLE "folder"
 (
-  "Id" serial NOT NULL,
-  "MailboxId" integer,
-  "ParentFolderId" integer,
-  "FolderName" character varying(100),
-  CONSTRAINT pk_folder_id PRIMARY KEY ("Id" ),
-  CONSTRAINT fk_folder_mailboxid_to_mailbox FOREIGN KEY ("MailboxId")
-      REFERENCES "Mailbox" ("Id") MATCH SIMPLE
+  "id" serial NOT NULL,
+  "mailbox_id" integer,
+  "parent_folder_id" integer,
+  "folder_name" character varying(100),
+  CONSTRAINT pk_folder_id PRIMARY KEY ("id" ),
+  CONSTRAINT fk_folder_mailbox_id_to_mailbox FOREIGN KEY ("mailbox_id")
+      REFERENCES "mailbox" ("id") MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT fk_folder_parentfolderid_to_folder FOREIGN KEY ("ParentFolderId")
-      REFERENCES "Folder" ("Id") MATCH SIMPLE
+  CONSTRAINT fk_folder_parent_folder_id_to_folder FOREIGN KEY ("parent_folder_id")
+      REFERENCES "folder" ("id") MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "Folder"
+ALTER TABLE "folder"
   OWNER TO postgres;
 
--- Index: fki_folder_parentfolderid_to_folder
+-- Index: fki_folder_parent_folder_id_to_folder
 
--- DROP INDEX fki_folder_parentfolderid_to_folder;
+-- DROP INDEX fki_folder_parent_folder_id_to_folder;
 
-CREATE INDEX fki_folder_parentfolderid_to_folder
-  ON "Folder"
+CREATE INDEX fki_folder_parent_folder_id_to_folder
+  ON "folder"
   USING btree
-  ("ParentFolderId" );
+  ("parent_folder_id" );
 
 
--- Table: "Message"
+-- Table: "message"
 
--- DROP TABLE "Message";
+-- DROP TABLE "message";
 
-CREATE TABLE "Message"
+CREATE TABLE "message"
 (
-  "Id" serial NOT NULL,
-  "ParentFolderId" integer,
-  "MessageBody" text,
-  "Date" time with time zone,
-  "Subject" character varying(512),
-  CONSTRAINT pk_message_id PRIMARY KEY ("Id" ),
-  CONSTRAINT fk_message_parentfolderid_to_folder FOREIGN KEY ("ParentFolderId")
-      REFERENCES "Folder" ("Id") MATCH SIMPLE
+  "id" serial NOT NULL,
+  "parent_folder_id" integer,
+  "message_body" text,
+  "date" time with time zone,
+  "subject" character varying(512),
+  CONSTRAINT pk_message_id PRIMARY KEY ("id" ),
+  CONSTRAINT fk_message_parent_folder_id_to_folder FOREIGN KEY ("parent_folder_id")
+      REFERENCES "folder" ("id") MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "Message"
+ALTER TABLE "message"
   OWNER TO postgres;
 
--- Index: fki_message_parentfolderid_to_folder
+-- Index: fki_message_parent_folder_id_to_folder
 
--- DROP INDEX fki_message_parentfolderid_to_folder;
+-- DROP INDEX fki_message_parent_folder_id_to_folder;
 
-CREATE INDEX fki_message_parentfolderid_to_folder
-  ON "Message"
+CREATE INDEX fki_message_parent_folder_id_to_folder
+  ON "message"
   USING btree
-  ("ParentFolderId" );
+  ("parent_folder_id" );
 
