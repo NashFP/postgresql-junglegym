@@ -72,7 +72,7 @@ CREATE TABLE "message"
   "id" serial NOT NULL,
   "parent_folder_id" integer,
   "message_body" text,
-  "date" time with time zone,
+  "date" timestamp with time zone,
   "subject" character varying(512),
   CONSTRAINT pk_message_id PRIMARY KEY ("id" ),
   CONSTRAINT fk_message_parent_folder_id_to_folder FOREIGN KEY ("parent_folder_id")
